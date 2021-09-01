@@ -67,7 +67,7 @@ def cca(X,Y,n):
 
     return S1, S2, a
 
-def CCAanalysis(noise_eeg, clean_eeg, IMF, residue):
+def CCAanalysis(noise_eeg, clean_eeg, IMF, residue, threshold1, threshold2):
     """Apply CCA decompose IMF. Utilize ACF to select artifact component. Retain EEG signal
     Users could adjust the threshold and threshold2 to tune the model.
 
@@ -85,8 +85,9 @@ def CCAanalysis(noise_eeg, clean_eeg, IMF, residue):
     for imf in IMF:
         acf = estimated_autocorrelation(imf)
         acfimf_list.append(np.abs(acf[1]))
-    threshold = np.mean(acfimf_list)*1.5
-    super_threshold_indices = np.where(np.array(acfimf_list) < threshold)
+    # threshold = np.mean(acfimf_list)
+    threshold1 = 1
+    super_threshold_indices = np.where(np.array(acfimf_list) < threshold1)
     mask = np.zeros(IMF.shape[0],dtype=bool)
     mask[super_threshold_indices] = True
     IMF_arti = IMF[mask]
@@ -153,13 +154,24 @@ def entropy(component):
 
 if __name__ == '__main__':
     # data acquisition
-    noise_eeg = np.load('data/noise_eeg.npy')
-    clean_eeg = np.load('data/clean_eeg.npy')
+    noise_eeg = np.load('../data/test_input.npy')
+    clean_eeg = np.load('../data/test_output.npy')
     # sample number
     sample = noise_eeg.shape[0]+1
     errorlist = []
-    for i in range(10):
+    mse_sa = 0
+    mse_ta = 0
+    ccaa = 0
+    for i in range(4000,4100):
         print("-------", i, "----------")
         IMF,residue = EEMDanalysis(noise_eeg[i],clean_eeg[i])
-        retainEEG = CCAanalysis(noise_eeg[i], clean_eeg[i],IMF, residue)
+        retainEEG = CCAanalysis(noise_eeg[i], clean_eeg[i],IMF, residue, 0.9,0.9)
+        plotSignal(noise_eeg[i],clean_eeg[i],retainEEG,"CCA")
+        mse_s, mse_t, cc = metric(noise_eeg[i],clean_eeg[i],noise_eeg[i])
+        mse_sa += mse_s
+        mse_ta += mse_t
+        ccaa += cc
+    print(mse_sa," ",mse_ta," ",ccaa)
+
+
 

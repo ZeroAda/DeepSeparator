@@ -79,5 +79,38 @@ def adafilter(noise_eeg, clean_eeg, EMG, EOG, L, ld):
     return retain_eeg
 
 
+if __name__ == '__main__':
+    # data acquisition
+    noise_eeg = np.load('../data/test_input.npy')
+    clean_eeg = np.load('../data/test_output.npy')
+    EMG = np.load('../data/EMG_all_epochs.npy',allow_pickle=True)
+    EOG = np.load('../data/EOG_all_epochs.npy',allow_pickle=True)
+    # sample number
+    sample = noise_eeg.shape[0]+1
+    # fs sampling frequency
+    fs = 512
+
+    errorlist = []
+    mse_sa = 0
+    mse_ta = 0
+    ccaa = 0
+    L = 300
+    ld = 0.001
+    for i in range(100):
+        print("-------", i, "----------")
+        stdEMG = EMG[i] / np.std(EMG[i])
+        stdEOG = EOG[i] / np.std(EOG[i])
+        # plot frequency
+        # Frequencyanalysis(noise_eeg[i], clean_eeg[i])
+        # band filter
+        # filtered = butter_bandpass_filter(noise_eeg[i], 0.1, 50.0, fs, order=5)
+        retainEEG = adafilter(noise_eeg[i], clean_eeg[i], stdEMG, stdEOG, L, ld)
+        mse_s, mse_t, cc = metric(noise_eeg[i],clean_eeg[i],retainEEG)
+        mse_sa += mse_s
+        mse_ta += mse_t
+        ccaa += cc
+    print(mse_sa, " ", mse_ta, " ", ccaa)
+
+
 
 

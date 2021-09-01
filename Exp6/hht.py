@@ -50,10 +50,10 @@ def HHTFilter(noise_eeg, clean_eeg, threshold, mode):
 
     # hierachical cluster
     tree = linkage(nordismatrix, method='single', metric='euclidean')
-    # fig = plt.figure(figsize=(25, 10))
-    # dn = dendrogram(tree)
-    # plt.axhline(threshold)
-    # plt.show()
+    fig = plt.figure(figsize=(25, 10))
+    dn = dendrogram(tree)
+    plt.axhline(threshold)
+    plt.show()
 
 
     # IMF selection
@@ -85,7 +85,7 @@ def HHTFilter(noise_eeg, clean_eeg, threshold, mode):
         origin = np.array(range(n_components))
         mask = [False if i in forbid else True for i in range(n_components)]
         componentsRetain = origin[mask]
-        # print("Maintain component: ",componentsRetain)
+        print("Maintain component: ",componentsRetain)
 
     retain_eeg = np.sum(imfs[componentsRetain], axis=0)
     # plot
@@ -99,13 +99,23 @@ def HHTFilter(noise_eeg, clean_eeg, threshold, mode):
 
 if __name__ == '__main__':
     # load data
-    noise_eeg = np.load('data/noise_eeg.npy')
-    clean_eeg = np.load('data/clean_eeg.npy')
+    noise_eeg = np.load('../data/test_input.npy')
+    clean_eeg = np.load('../data/test_output.npy')
     sample = noise_eeg.shape[0]
     error = 0
     errorlist = []
     # HHT filter
-    for i in range(10):
+    mse_sa = 0
+    mse_ta = 0
+    ccaa = 0
+    for i in range(4001,4010):
         print("-------",i,"----------")
         retain_eeg = HHTFilter(noise_eeg[i], clean_eeg[i], threshold=2, mode='threshold')
+        # plotSignal(noise_eeg[i],clean_eeg[i],retain_eeg,"hht")
+        mse_s, mse_t, cc = metric(noise_eeg[i], clean_eeg[i], retain_eeg)
+        mse_sa += mse_s
+        mse_ta += mse_t
+        ccaa += cc
+    print(mse_sa, " ", mse_ta, " ", ccaa)
+
 

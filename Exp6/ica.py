@@ -132,7 +132,7 @@ def ICAanalysis(noise_eeg, clean_eeg, IMF, residue):
 
     error = np.mean(np.power((retainEEG - clean_eeg), 2))
     origin = np.mean(np.power((noise_eeg - clean_eeg), 2))
-    print("error: ",error)
+    # print("error: ",error)
 
     return retainEEG
 
@@ -140,8 +140,8 @@ def ICAanalysis(noise_eeg, clean_eeg, IMF, residue):
 
 if __name__ == '__main__':
     # data acquisition
-    noise_eeg = np.load('data/noise_eeg.npy')
-    clean_eeg = np.load('data/clean_eeg.npy')
+    noise_eeg = np.load('../data/test_input.npy')
+    clean_eeg = np.load('../data/test_output.npy')
     # sample number
     sample = noise_eeg.shape[0]+1
     # fs sampling frequency
@@ -149,7 +149,10 @@ if __name__ == '__main__':
 
     # ICA + exponent analysis
     errorlist = []
-    for i in range(10):
+    mse_sa = 0
+    mse_ta = 0
+    ccaa = 0
+    for i in range(100):
         print("-------", i, "----------")
         # plot frequency
         # Frequencyanalysis(noise_eeg[i], clean_eeg[i])
@@ -157,4 +160,9 @@ if __name__ == '__main__':
         # filtered = butter_bandpass_filter(noise_eeg[i], 0.1, 50.0, fs, order=5)
         IMF,residue = EEMDanalysis(noise_eeg[i],clean_eeg[i])
         retainEEG = ICAanalysis(noise_eeg[i],clean_eeg[i],IMF, residue)
+        mse_s, mse_t, cc = metric(noise_eeg[i],clean_eeg[i],retainEEG)
+        mse_sa += mse_s
+        mse_ta += mse_t
+        ccaa += cc
+    print(mse_sa, " ", mse_ta, " ", ccaa)
 
