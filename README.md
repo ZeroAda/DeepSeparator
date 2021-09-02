@@ -7,8 +7,8 @@ Choose best Filter
 Compare with traditional method
 
 #### Usage
-Run tradition.py
-Run testCriterion.py
-Run paint.py
+1. Run tradition.py
+2. Run testCriterion.py
+3. Run paint.py
 
 attention: change the sample number
