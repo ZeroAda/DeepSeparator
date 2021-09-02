@@ -14,13 +14,13 @@ if __name__ == '__main__':
 
     ## EOG
 
-    # EOGmset_list = np.loadtxt("EOGmset matrix")
-    # EOGmses_list = np.loadtxt("EOGmses matrix")
-    # EOGcc_list = np.loadtxt("EOGcc matrix")
-    # EOGmset_list_CNN = np.loadtxt("EOGmset matrix_CNN")
-    # EOGmses_list_CNN = np.loadtxt("EOGmses matrix_CNN")
-    # EOGcc_list_CNN = np.loadtxt("EOGcc matrix_CNN")
-    # plotSNRhighCNN("EOG",EOGmset_list,EOGmses_list,EOGcc_list, EOGmset_list_CNN, EOGmses_list_CNN, EOGcc_list_CNN)
+    EOGmset_list = np.loadtxt("EOGmset matrix")
+    EOGmses_list = np.loadtxt("EOGmses matrix")
+    EOGcc_list = np.loadtxt("EOGcc matrix")
+    EOGmset_list_CNN = np.loadtxt("EOGmset matrix_CNN")
+    EOGmses_list_CNN = np.loadtxt("EOGmses matrix_CNN")
+    EOGcc_list_CNN = np.loadtxt("EOGcc matrix_CNN")
+    plotSNRhighCNN("EOG",EOGmset_list,EOGmses_list,EOGcc_list, EOGmset_list_CNN, EOGmses_list_CNN, EOGcc_list_CNN)
     #
 
     # EMG
