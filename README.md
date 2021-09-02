@@ -5,7 +5,7 @@ Choose best Encoder-Decoder
 Choose best Filter
 ### Experiment 6
 Compare with traditional method
-#### Prequisite
+#### Prerequisite
 ```
 pip install tftb
 pip install pyhht
@@ -15,7 +15,25 @@ pip install EMD-signal
 #### Usage
 
 1. Run tradition.py
+
+Traditional method:
+
+Change line 64 range(), range(0,400) for EOG, range(4000,4400) for EMG
+
+Change sample number (400) accordingly.
+
+Accordingly, change the text file name 
+
 2. Run testCriterion.py
+
+CNN method:
+
+Change line 64 range(), range(0,400) for EOG, range(4000,4400) for EMG
+
+Change sample number (400) accordingly.
+
+Accordingly, change the text file name 
+
 3. Run paint.py
 
-attention: change the sample number
+
