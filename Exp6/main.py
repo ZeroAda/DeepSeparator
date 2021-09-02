@@ -36,43 +36,26 @@ if __name__ == '__main__':
     # # sample number
     sample = 1
     # MSE temporal matrix
-    mset_list = np.zeros((10, 5))
+    mset_list = np.zeros((10, 4))
     # MSE spectral matrix
-    mses_list = np.zeros((10, 5))
+    mses_list = np.zeros((10, 4))
     # Correlation coefficient matrix
-    cc_list = np.zeros((10, 5))
+    cc_list = np.zeros((10, 4))
     # adaptive filter parameter
     L = 300
     ld = 0.001
-    # load CNN model
-    selected_model = "CNN-CNN"
-    model = CNN_CNN()
-    if os.path.exists('checkpoint/' + selected_model + '.pkl'):
-        print('load model')
-        model.load_state_dict(torch.load('checkpoint/' + selected_model + '.pkl'))
 
-    ideal_atte_x_comp = np.array([0, 1])
-    ideal_atte_x = np.tile(ideal_atte_x_comp, 256)
-    ideal_atte_x = torch.from_numpy(ideal_atte_x)
-    ideal_atte_x = ideal_atte_x.float()
-
-    test_input = torch.from_numpy(test_input)
-    test_output = torch.from_numpy(test_output)
-
-    test_indicator = np.zeros(test_input.shape[0])
-    test_indicator = torch.from_numpy(test_indicator)
-    test_indicator = test_indicator.unsqueeze(1)
-
-    print(test_indicator.shape)
-
-    # test_torch_dataset = Data.TensorDataset(test_input, test_indicator, test_output)
     #
-    # test_loader = Data.DataLoader(
-    #     dataset=test_torch_dataset,
-    #     batch_size=BATCH_SIZE,
-    #     shuffle=False,  # test set不要打乱数据
-    # )
-
+    # # print(test_indicator.shape)
+    # #
+    # # test_torch_dataset = Data.TensorDataset(test_input, test_indicator, test_output)
+    # #
+    # # test_loader = Data.DataLoader(
+    # #     dataset=test_torch_dataset,
+    # #     batch_size=BATCH_SIZE,
+    # #     shuffle=False,  # test set不要打乱数据
+    # # )
+    #
     print("torch.cuda.is_available() = ", torch.cuda.is_available())
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -82,7 +65,7 @@ if __name__ == '__main__':
     注意加载不同的模型，保存的模型文件命名也要不一样 
     '''
 
-    model.to(device)  # 移动模型到cuda
+    # model.to(device)  # 移动模型到cuda
 
     for i in range(sample):
         print("------- sample ", i, "----------")
@@ -127,13 +110,7 @@ if __name__ == '__main__':
             mses_list[j, 3] += mse_s
             cc_list[j, 3] += cc
 
-            # 5. CNN-CNN
-            print("------ CNN-CNN ------")
-            retain_eeg5 = model(test_input[i+400*j], test_indicator[i+400*j], ideal_atte_x[i+400*j])
-            mse_s, mse_t, cc = metric(test_input[i + 400 * j], test_output[i + 400 * j], retain_eeg5)
-            mset_list[j, 4] += mse_t
-            mses_list[j, 4] += mse_s
-            cc_list[j, 4] += cc
+
 
     mset_list /= sample
     mses_list /= sample

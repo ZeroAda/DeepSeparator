@@ -25,15 +25,19 @@ def metric(origin_noisy,clean_eeg,retain_eeg):
     # spectral mse
     # fft
     num_sample = 512
-    retain_eeg_ap = fft(retain_eeg, num_sample)
-    clean_eeg_ap = fft(clean_eeg, num_sample)
-    noise_eeg_ap = fft(origin_noisy, num_sample)
+    # retain_eeg_ap = fft(retain_eeg, num_sample)
+    # clean_eeg_ap = fft(clean_eeg, num_sample)
+    # noise_eeg_ap = fft(origin_noisy, num_sample)
 
     # psd
-    retain_eeg_s = retain_eeg_ap*np.conj(retain_eeg_ap)/num_sample
-    clean_eeg_s = clean_eeg_ap*np.conj(clean_eeg_ap)/num_sample
-    noise_eeg_s = noise_eeg_ap*np.conj(noise_eeg_ap)/num_sample
-    plt.figure()
+
+
+    retain_eeg_s,freq = plt.psd(retain_eeg, NFFT=512, Fs=256, pad_to=1024,
+                                 scale_by_freq=True)
+    clean_eeg_s,freq = plt.psd(clean_eeg, NFFT=512, Fs=256, pad_to=1024,
+                                 scale_by_freq=True)
+    noise_eeg_s = plt.psd(origin_noisy, NFFT=512, Fs=256, pad_to=1024,
+                                 scale_by_freq=True)
     # print(np.double(np.mean(np.power(retain_eeg_s-clean_eeg_s,2))))
     # plt.subplot(3,1,1)
     # f = np.linspace(0,num_sample/4,256)
@@ -72,15 +76,16 @@ def metric(origin_noisy,clean_eeg,retain_eeg):
     mse_s = np.mean(np.power(retain_eeg_s-clean_eeg_s, 2))
     # correlation coefficient
     cc = np.corrcoef(retain_eeg, clean_eeg)[0,1]
-    print("mse t",mse_t)
-    print("mse s",np.double(mse_s))
-    print("cc",cc)
+    # print("mse t",mse_t)
+    # print("mse s",np.double(mse_s))
+    # print("cc",cc)
+    plt.close()
 
     return mse_s, mse_t, cc
 
 def plotSNRhigh(mset_list, mses_list, cc_list):
     plt.figure()
-    plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='adaptive filter')
+    plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mset_list[:,1].T,'.-.',label='HHT')
     plt.plot(range(-7, 3), mset_list[:,2].T,'.-.',label='EEMD-ICA')
     plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
@@ -90,7 +95,7 @@ def plotSNRhigh(mset_list, mses_list, cc_list):
     plt.title("MSE temporal")
 
     plt.figure()
-    plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.',label='adaptive filter')
+    plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mses_list[:, 1].T, '.-.',label='HHT')
     plt.plot(range(-7, 3), mses_list[:, 2].T, '.-.',label='EEMD-ICA')
     plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
@@ -100,13 +105,58 @@ def plotSNRhigh(mset_list, mses_list, cc_list):
     plt.title("MSE spectral")
 
     plt.figure()
-    plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='adaptive filter')
+    plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), cc_list[:, 1].T, '.-.',label='HHT')
     plt.plot(range(-7, 3), cc_list[:, 2].T, '.-.',label='EEMD-ICA')
     plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
     plt.xlabel("SNR(db)")
     plt.ylabel("CC")
     plt.title("CC")
+    plt.legend()
+    plt.show()
+
+
+def plotSNRhighCNN(mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, cc_list_CNN):
+    plt.figure()
+    plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='Adaptive Filter')
+    plt.plot(range(-7, 3), mset_list[:,1].T,'.-.',label='HHT')
+    plt.plot(range(-7, 3), mset_list[:,2].T,'.-.',label='EEMD-ICA')
+    plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
+    plt.plot(range(-7, 3), mset_list_CNN.T,'.-.',label='CNN-CNN')
+
+
+    plt.xlabel("SNR(db)")
+    plt.ylabel("MSE")
+    plt.legend()
+    plt.title("MSE temporal")
+    plt.savefig("MSE temporal.png")
+
+
+    plt.figure()
+    plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.',label='Adaptive Filter')
+    plt.plot(range(-7, 3), mses_list[:, 1].T, '.-.',label='HHT')
+    plt.plot(range(-7, 3), mses_list[:, 2].T, '.-.',label='EEMD-ICA')
+    plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
+    plt.plot(range(-7, 3), mses_list_CNN.T,'.-.',label='CNN-CNN')
+
+    plt.xlabel("SNR(db)")
+    plt.ylabel("MSE")
+    plt.legend()
+    plt.title("MSE spectral")
+    plt.savefig("MSE spectral.png")
+
+    plt.figure()
+    plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='Adaptive Filter')
+    plt.plot(range(-7, 3), cc_list[:, 1].T, '.-.',label='HHT')
+    plt.plot(range(-7, 3), cc_list[:, 2].T, '.-.',label='EEMD-ICA')
+    plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
+    plt.plot(range(-7, 3), cc_list_CNN.T,'.-.',label='CNN-CNN')
+
+    plt.xlabel("SNR(db)")
+    plt.ylabel("CC")
+    plt.title("CC")
+    plt.savefig("CC.png")
+
     plt.legend()
     plt.show()
 

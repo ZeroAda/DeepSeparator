@@ -50,10 +50,10 @@ def HHTFilter(noise_eeg, clean_eeg, threshold, mode):
 
     # hierachical cluster
     tree = linkage(nordismatrix, method='single', metric='euclidean')
-    fig = plt.figure(figsize=(25, 10))
-    dn = dendrogram(tree)
-    plt.axhline(threshold)
-    plt.show()
+    # fig = plt.figure(figsize=(25, 10))
+    # dn = dendrogram(tree)
+    # plt.axhline(threshold)
+    # plt.show()
 
 
     # IMF selection
@@ -67,7 +67,7 @@ def HHTFilter(noise_eeg, clean_eeg, threshold, mode):
         # find the cluster index with largest number
         retain = max(count.items(), key=operator.itemgetter(1))[0]
         componentsRetain = np.where(newcluster == retain)
-        print("Maintain component: ",componentsRetain)
+        # print("Maintain component: ",componentsRetain)
 
     ## threshold mode:
     ## select two component with largest distance from other clusters
@@ -85,7 +85,7 @@ def HHTFilter(noise_eeg, clean_eeg, threshold, mode):
         origin = np.array(range(n_components))
         mask = [False if i in forbid else True for i in range(n_components)]
         componentsRetain = origin[mask]
-        print("Maintain component: ",componentsRetain)
+        # print("Maintain component: ",componentsRetain)
 
     retain_eeg = np.sum(imfs[componentsRetain], axis=0)
     # plot
