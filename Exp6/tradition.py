@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-File Name: main.py
+File Name: tradition.py
 Description: Apply traditional method to denoise single-channel EEG
 Author: Chenyi Li
 Date: 7/31/2021
@@ -16,7 +16,7 @@ import os
 import torch
 
 
-if __name__ == '__main__':
+def tradition():
     start = time.time()
     # Data acquisition
     test_output = np.load('../data/test_output.npy')
@@ -129,3 +129,5 @@ if __name__ == '__main__':
     interval = end - start
     print("Time consumpition: ",interval)
 
+if __name__ == '__main__':
+    tradition()
