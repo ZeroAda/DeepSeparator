@@ -34,7 +34,6 @@ def tradition():
     # (3400, 512) EOG
 
     # # sample number
-    sample = 1
     # MSE temporal matrix
     mset_list = np.zeros((10, 4))
     # MSE spectral matrix
@@ -67,7 +66,7 @@ def tradition():
 
     # model.to(device)  # 移动模型到cuda
 
-    for i in range(sample):
+    for i in range(4000,4001):
         print("------- sample ", i, "----------")
         for j in range(10):
             print("--------- SNR", j-7, "-----------")
@@ -110,15 +109,18 @@ def tradition():
             mses_list[j, 3] += mse_s
             cc_list[j, 3] += cc
 
-
+    sample = 2
 
     mset_list /= sample
     mses_list /= sample
     cc_list /= sample
 
-    np.savetxt("mset matrix", mset_list)
-    np.savetxt("mses matrix", mses_list)
-    np.savetxt("cc matrix", cc_list)
+    # np.savetxt("EOGmset matrix", mset_list)
+    # np.savetxt("EOGmses matrix", mses_list)
+    # np.savetxt("EOGcc matrix", cc_list)
+    np.savetxt("EMGmset matrix", mset_list)
+    np.savetxt("EMGmses matrix", mses_list)
+    np.savetxt("EMGcc matrix", cc_list)
 
     # plotSNRhigh(mset_list, mses_list, cc_list)
     print("-------final result----------")
@@ -130,4 +132,8 @@ def tradition():
     print("Time consumpition: ",interval)
 
 if __name__ == '__main__':
+    # change range() to change sample
+    # 0 to 400: EOG
     tradition()
+    # 4000 to 4400: EMG
+    # tradition(sample=(4000,4400))

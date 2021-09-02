@@ -23,6 +23,7 @@ def FourierLoss(pred, real):
 
     pred = pred.detach().numpy()
     real = real.detach().numpy()
+    print(type(pred))
 
     fft_pred = pred
     fft_real = real
@@ -82,7 +83,7 @@ def standardization(data):
 
 custom_loss = CustomLoss()
 
-BATCH_SIZE = 1000
+BATCH_SIZE = 0
 learning_rate = 1e-3
 epochs = 1
 
@@ -93,17 +94,17 @@ print_train_accuracy_frequency = 1
 test_frequency = 10
 
 # 模型有CNN_CNN，CNN_FCN，CNN_CNNFCN，CNN_RNN，CNN_LSTM
-selected_model = 'CNN_LSTM'
-model = CNN_LSTM()
+selected_model = 'CNN_CNN'
+model = CNN_CNN()
 
-# test_input = np.load('../data/test_input.npy')
-# test_output = np.load('../data/test_output.npy')
+test_input = np.load('../data/test_input.npy')
+test_output = np.load('../data/test_output.npy')
 # #
 # test_input = np.load('../data/EOG_EEG_test_input.npy')
 # test_output = np.load('../data/EOG_EEG_test_output.npy')
-#
-test_input = np.load('../data/EMG_EEG_test_input.npy')
-test_output = np.load('../data/EMG_EEG_test_output.npy')
+# #
+# test_input = np.load('../data/EMG_EEG_test_input.npy')
+# test_output = np.load('../data/EMG_EEG_test_output.npy')
 
 '''
 注意使用不同的模型，embedding vector和attenuation vector的维度会有不同，要相应调整ideal_atte_x的长度
@@ -120,14 +121,14 @@ test_output = torch.from_numpy(test_output)
 test_indicator = np.zeros(test_input.shape[0])
 test_indicator = torch.from_numpy(test_indicator)
 test_indicator = test_indicator.unsqueeze(1)
-
-test_torch_dataset = Data.TensorDataset(test_input, test_indicator, test_output)
-
-test_loader = Data.DataLoader(
-    dataset=test_torch_dataset,
-    batch_size=BATCH_SIZE,
-    shuffle=False,               # test set不要打乱数据
-)
+#
+# test_torch_dataset = Data.TensorDataset(test_input, test_indicator, test_output)
+#
+# test_loader = Data.DataLoader(
+#     dataset=test_torch_dataset,
+#     batch_size=BATCH_SIZE,
+#     shuffle=False,               # test set不要打乱数据
+# )
 
 print("torch.cuda.is_available() = ", torch.cuda.is_available())
 
@@ -149,43 +150,43 @@ if os.path.exists('checkpoint/' + selected_model + '.pkl'):
     print('load model')
     model.load_state_dict(torch.load('checkpoint/' + selected_model + '.pkl'))
 
-test_step_num = 0
 
-total_test_loss_per_epoch = 0
-average_test_loss_per_epoch = 0
+# change range() to change sample
+# 0 to 400: EOG
+# 4000 to 4400: EMG
+sample = 400
+# MSE temporal matrix
+mset_list = np.zeros((10, 1))
+# MSE spectral matrix
+mses_list = np.zeros((10, 1))
+# Correlation coefficient matrix
+cc_list = np.zeros((10, 1))
+for i in range(4000,4400):
+    print("------- sample ", i, "----------")
+    for j in range(10):
+        print("--------- SNR", j - 7, "-----------")
 
-total_test_fourier_loss_per_epoch = 0
-average_test_fourier_loss_per_epoch = 0
+        _test_indicator = test_indicator[i+400*j].float().to(device)
 
-total_test_correlation_per_epoch = 0
-average_test_correlation_per_epoch = 0
+        _test_input = test_input[i+400*j].float().to(device)
+        _test_output = test_output[i+400*j].float().to(device)
 
-for step, (test_input, test_indicator, test_output) in enumerate(test_loader):
+        test_preds, _ = model(_test_input.unsqueeze(0), _test_indicator)
 
-    test_step_num += 1
+        test_loss = custom_loss(test_preds, _test_output.unsqueeze(0))
+        test_fourier_loss = SpectralLoss(test_preds, _test_output.unsqueeze(0))
 
-    ideal_atte_x = ideal_atte_x.float().to(device)
-    test_indicator = test_indicator.float().to(device)
+        corr = correlation(test_preds, _test_output.unsqueeze(0))
 
-    test_input = test_input.float().to(device)
-    test_output = test_output.float().to(device)
+        mset_list[j, 0] += test_loss
+        mses_list[j, 0] += test_fourier_loss
+        cc_list[j, 0] += corr
 
-    test_preds, _ = model(test_input, test_indicator)
+mset_list /= sample
+mses_list /= sample
+cc_list /= sample
 
-    test_loss = custom_loss(test_preds, test_output)
-    test_fourier_loss = SpectralLoss(test_preds, test_output)
-    
-    corr = correlation(test_preds, test_output)
-
-    total_test_loss_per_epoch += test_loss.item()
-    total_test_fourier_loss_per_epoch += test_fourier_loss
-    total_test_correlation_per_epoch += corr
-
-average_test_loss_per_epoch = total_test_loss_per_epoch / test_step_num
-average_test_fourier_loss_per_epoch = total_test_fourier_loss_per_epoch / test_step_num
-average_test_correlation_per_epoch = total_test_correlation_per_epoch / test_step_num
-
-print('--------------test temporal MSE: ', average_test_loss_per_epoch)
-print('--------------test spectral MSE: ', average_test_fourier_loss_per_epoch)
-print('--------------test correlation: ', average_test_correlation_per_epoch)
+np.savetxt("EMGmset matrix_CNN", mset_list)
+np.savetxt("EMGmses matrix_CNN", mses_list)
+np.savetxt("EMGcc matrix_CNN", cc_list)
 

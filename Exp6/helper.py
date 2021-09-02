@@ -116,7 +116,7 @@ def plotSNRhigh(mset_list, mses_list, cc_list):
     plt.show()
 
 
-def plotSNRhighCNN(mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, cc_list_CNN):
+def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, cc_list_CNN):
     plt.figure()
     plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mset_list[:,1].T,'.-.',label='HHT')
@@ -128,8 +128,10 @@ def plotSNRhighCNN(mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, 
     plt.xlabel("SNR(db)")
     plt.ylabel("MSE")
     plt.legend()
-    plt.title("MSE temporal")
-    plt.savefig("MSE temporal.png")
+    title = name + " MSE temporal"
+    plt.title(title)
+    fig = title + ".png"
+    plt.savefig(fig)
 
 
     plt.figure()
@@ -142,8 +144,10 @@ def plotSNRhighCNN(mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, 
     plt.xlabel("SNR(db)")
     plt.ylabel("MSE")
     plt.legend()
-    plt.title("MSE spectral")
-    plt.savefig("MSE spectral.png")
+    title = name + " MSE spectral"
+    plt.title(title)
+    fig = title + ".png"
+    plt.savefig(fig)
 
     plt.figure()
     plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='Adaptive Filter')
@@ -154,8 +158,10 @@ def plotSNRhighCNN(mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, 
 
     plt.xlabel("SNR(db)")
     plt.ylabel("CC")
-    plt.title("CC")
-    plt.savefig("CC.png")
+    title = name + " CC"
+    plt.title(title)
+    fig = title + ".png"
+    plt.savefig(fig)
 
     plt.legend()
     plt.show()
