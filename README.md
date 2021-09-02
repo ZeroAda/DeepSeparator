@@ -37,3 +37,7 @@ Accordingly, change the text file name
 3. Run paint.py
 
 
+#### Result sample
+In result, the CNN result is derived from the complete data.
+The traditional result is derived from 2 piece of data since I did not finish running.
+
