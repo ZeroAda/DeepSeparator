@@ -5,3 +5,10 @@ Choose best Encoder-Decoder
 Choose best Filter
 ### Experiment 6
 Compare with traditional method
+
+#### Usage
+Run tradition.py
+Run testCriterion.py
+Run paint.py
+
+attention: change the sample number
