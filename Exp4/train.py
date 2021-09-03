@@ -17,7 +17,7 @@ class CustomLoss(nn.Module):
         super().__init__()
 
     def forward(self, pred, real, atte, ideal_atte):
-        return torch.mean(torch.pow((pred - real), 2)) + torch.mean(torch.pow((atte-ideal_atte),2))
+        return torch.mean(torch.pow((pred - real), 2))
 
 
 class TestLoss(nn.Module):
