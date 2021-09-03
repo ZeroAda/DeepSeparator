@@ -39,7 +39,7 @@ custom_loss = CustomLoss()
 testLoss = TestLoss()
 
 BATCH_SIZE = 7000
-learning_rate = 1e-3
+learning_rate = 1e-5
 epochs = 50
 
 mini_loss = 1
@@ -49,8 +49,8 @@ print_train_accuracy_frequency = 1
 test_frequency = 1
 
 # 模型有CNN_CNN，CNN_FCN，CNN_CNNFCN，CNN_RNN，CNN_LSTM
-selected_model = 'CNN_LSTM'
-model = CNN_LSTM()
+selected_model = 'CNN_CNN'
+model = CNN_CNN()
 
 noise_eeg = np.load('../data/train_input.npy')
 clean_eeg = np.load('../data/train_output.npy')
@@ -132,6 +132,7 @@ if os.path.exists('checkpoint/' + selected_model + '.pkl'):
 train_loss_list = []
 test_loss_list = []
 for epoch in range(epochs):
+    print("epoch"+str(epoch))
 
     train_acc = 0
     train_loss = 0
@@ -141,7 +142,6 @@ for epoch in range(epochs):
     train_step_num = 0
 
     for step, (train_input, indicator, train_output) in enumerate(train_loader):
-
         train_step_num += 1
 
         ideal_atte_x = ideal_atte_x.float().to(device)
@@ -196,5 +196,5 @@ for epoch in range(epochs):
             torch.save(model.state_dict(), 'checkpoint/' + selected_model + '.pkl')
             mini_loss = average_test_loss_per_epoch
 
-np.save("CNN-LSTM train loss",train_loss_list)
-np.save("CNN-LSTM test loss",test_loss_list)
+np.save("CNN-CNN train loss",train_loss_list)
+np.save("CNN-CNN test loss",test_loss_list)

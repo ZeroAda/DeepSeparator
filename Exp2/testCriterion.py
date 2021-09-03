@@ -82,7 +82,7 @@ def standardization(data):
 
 custom_loss = CustomLoss()
 
-BATCH_SIZE = 1000
+BATCH_SIZE = 6000
 learning_rate = 1e-3
 epochs = 1
 
@@ -93,17 +93,17 @@ print_train_accuracy_frequency = 1
 test_frequency = 10
 
 # 模型有CNN_CNN，CNN_FCN，CNN_CNNFCN，CNN_RNN，CNN_LSTM
-selected_model = 'CNN_LSTM'
-model = CNN_LSTM()
+selected_model = 'CNN_CNN'
+model = CNN_CNN()
 
-# test_input = np.load('../data/test_input.npy')
-# test_output = np.load('../data/test_output.npy')
+test_input = np.load('../data/test_input.npy')
+test_output = np.load('../data/test_output.npy')
 # #
 # test_input = np.load('../data/EOG_EEG_test_input.npy')
 # test_output = np.load('../data/EOG_EEG_test_output.npy')
 #
-test_input = np.load('../data/EMG_EEG_test_input.npy')
-test_output = np.load('../data/EMG_EEG_test_output.npy')
+# test_input = np.load('../data/EMG_EEG_test_input.npy')
+# test_output = np.load('../data/EMG_EEG_test_output.npy')
 
 '''
 注意使用不同的模型，embedding vector和attenuation vector的维度会有不同，要相应调整ideal_atte_x的长度
