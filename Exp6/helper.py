@@ -117,53 +117,54 @@ def plotSNRhigh(mset_list, mses_list, cc_list):
 
 
 def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, cc_list_CNN):
+    # set dpi and fontsize
     plt.figure()
     plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mset_list[:,1].T,'.-.',label='HHT')
     plt.plot(range(-7, 3), mset_list[:,2].T,'.-.',label='EEMD-ICA')
-    plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
+    # plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
     plt.plot(range(-7, 3), mset_list_CNN.T,'.-.',label='CNN-CNN')
 
 
-    plt.xlabel("SNR(db)")
-    plt.ylabel("MSE")
-    plt.legend()
+    plt.xlabel("SNR(db)",fontsize=18)
+    plt.ylabel("MSE",fontsize=18)
+    plt.legend(fontsize=14)
     title = name + " MSE temporal"
-    plt.title(title)
+    plt.title(title,fontsize=18)
     fig = title + ".png"
-    plt.savefig(fig)
+    plt.savefig(fig,dpi=300)
 
 
     plt.figure()
     plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mses_list[:, 1].T, '.-.',label='HHT')
     plt.plot(range(-7, 3), mses_list[:, 2].T, '.-.',label='EEMD-ICA')
-    plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
+    # plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
     plt.plot(range(-7, 3), mses_list_CNN.T,'.-.',label='CNN-CNN')
 
-    plt.xlabel("SNR(db)")
-    plt.ylabel("MSE")
-    plt.legend()
+    plt.xlabel("SNR(db)",fontsize=18)
+    plt.ylabel("MSE",fontsize=18)
+    plt.legend(fontsize=14)
     title = name + " MSE spectral"
-    plt.title(title)
+    plt.title(title,fontsize=18)
     fig = title + ".png"
-    plt.savefig(fig)
+    plt.savefig(fig,dpi=300)
 
     plt.figure()
     plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), cc_list[:, 1].T, '.-.',label='HHT')
     plt.plot(range(-7, 3), cc_list[:, 2].T, '.-.',label='EEMD-ICA')
-    plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
+    # plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
     plt.plot(range(-7, 3), cc_list_CNN.T,'.-.',label='CNN-CNN')
 
-    plt.xlabel("SNR(db)")
-    plt.ylabel("CC")
+    plt.xlabel("SNR(db)",fontsize=18)
+    plt.ylabel("CC",fontsize=18)
     title = name + " CC"
-    plt.title(title)
+    plt.title(title,fontsize=18)
     fig = title + ".png"
-    plt.savefig(fig)
+    plt.legend(fontsize=14)
+    plt.savefig(fig,dpi=300)
 
-    plt.legend()
     plt.show()
 
 def plotSNR(mset_list, mses_list, cc_list):

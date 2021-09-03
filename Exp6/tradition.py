@@ -61,7 +61,7 @@ def tradition():
 
 
     #
-    for i in range(400):
+    for i in range(4000,4040):
         print("------- sample ", i, "----------")
         for j in range(10):
             print("--------- SNR", j-7, "-----------")
@@ -104,18 +104,18 @@ def tradition():
             mses_list[j, 3] += mse_s
             cc_list[j, 3] += cc
 
-    sample = 4000
+    sample = 40
 
     mset_list /= sample
     mses_list /= sample
     cc_list /= sample
 
-    np.savetxt("EOGmset matrix", mset_list)
-    np.savetxt("EOGmses matrix", mses_list)
-    np.savetxt("EOGcc matrix", cc_list)
-    # np.savetxt("EMGmset matrix", mset_list)
-    # np.savetxt("EMGmses matrix", mses_list)
-    # np.savetxt("EMGcc matrix", cc_list)
+    # np.savetxt("EOGmset matrix", mset_list)
+    # np.savetxt("EOGmses matrix", mses_list)
+    # np.savetxt("EOGcc matrix", cc_list)
+    np.savetxt("EMGmset matrix", mset_list)
+    np.savetxt("EMGmses matrix", mses_list)
+    np.savetxt("EMGcc matrix", cc_list)
 
     # plotSNRhigh(mset_list, mses_list, cc_list)
     print("-------final result----------")
@@ -131,4 +131,4 @@ if __name__ == '__main__':
     # 0 to 400: EOG
     tradition()
     # 4000 to 4400: EMG
-    # tradition()
+    # tradition()+
