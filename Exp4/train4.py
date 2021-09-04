@@ -49,7 +49,7 @@ print_train_accuracy_frequency = 1
 test_frequency = 1
 
 # 模型有CNN_CNN，CNN_FCN，CNN_CNNFCN，CNN_RNN，CNN_CNN
-selected_model = '1v1CNN_CNN_'
+selected_model = '31v1CNN_CNN_'
 model = CNN_CNN()
 
 noise_eeg = np.load('../data/train_input.npy')
@@ -89,11 +89,11 @@ train_output = torch.from_numpy(train_output)
 
 # change ratio of 1:0
 #1:1
-print("1:1")
-ideal_atte_x_comp = np.array([0, 1])
-ideal_atte_x = np.tile(ideal_atte_x_comp, 256)
-ideal_atte_x = torch.from_numpy(ideal_atte_x)
-ideal_atte_x = ideal_atte_x.float()
+# print("1:1")
+# ideal_atte_x_comp = np.array([0, 1])
+# ideal_atte_x = np.tile(ideal_atte_x_comp, 256)
+# ideal_atte_x = torch.from_numpy(ideal_atte_x)
+# ideal_atte_x = ideal_atte_x.float()
 #7:1
 # print("7:1")
 # ideal_atte_x_comp = np.array([1,1,1,1,1,1,1,0])
@@ -102,7 +102,7 @@ ideal_atte_x = ideal_atte_x.float()
 # ideal_atte_x = ideal_atte_x.float()
 # print(ideal_atte_x.shape)
 
-#15:1
+# 15:1
 # print("15:1")
 # temp = [1]*15
 # temp.append(0)
@@ -112,14 +112,14 @@ ideal_atte_x = ideal_atte_x.float()
 # ideal_atte_x = ideal_atte_x.float()
 
 #31:1
-# print("31:1")
-#
-# temp = [1]*31
-# temp.append(0)
-# ideal_atte_x_comp = np.array(temp)
-# ideal_atte_x = np.tile(ideal_atte_x_comp, 16)
-# ideal_atte_x = torch.from_numpy(ideal_atte_x)
-# ideal_atte_x = ideal_atte_x.float()
+print("31:1")
+
+temp = [1]*31
+temp.append(0)
+ideal_atte_x_comp = np.array(temp)
+ideal_atte_x = np.tile(ideal_atte_x_comp, 16)
+ideal_atte_x = torch.from_numpy(ideal_atte_x)
+ideal_atte_x = ideal_atte_x.float()
 
 train_torch_dataset = Data.TensorDataset(train_input, indicator, train_output)
 
@@ -163,6 +163,8 @@ test_loss_list = []
 
 start = time.time()
 for epoch in range(epochs):
+    print("epoch"+str(epoch))
+
 
     train_acc = 0
     train_loss = 0
@@ -228,8 +230,9 @@ for epoch in range(epochs):
             mini_loss = average_test_loss_per_epoch
 
 
-np.savetxt("1v1CNN-CNN train loss",train_loss_list)
-np.savetxt("1v1CNN-CNN test loss",test_loss_list)
+np.savetxt("31v1CNN-CNN train loss",train_loss_list)
+np.savetxt("31v1CNN-CNN test loss",test_loss_list)
 end = time.time()
 interval = end - start
 print("Time consumpition: ",interval)
+print("31v1 finish")
