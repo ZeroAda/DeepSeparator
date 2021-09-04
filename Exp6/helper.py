@@ -8,7 +8,7 @@ Date: 7/31/2021
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft, fftshift, ifft
-
+from matplotlib.ticker import MultipleLocator
 
 def metric(origin_noisy,clean_eeg,retain_eeg):
     # problem: psd xx 与 手算的不大一样
@@ -118,54 +118,86 @@ def plotSNRhigh(mset_list, mses_list, cc_list):
 
 def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, cc_list_CNN):
     # set dpi and fontsize
-    plt.figure()
+    plt.figure(figsize=(13,9))
+    ax1 = plt.subplot(1, 3, 1)
+
     plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mset_list[:,1].T,'.-.',label='HHT')
     plt.plot(range(-7, 3), mset_list[:,2].T,'.-.',label='EEMD-ICA')
     # plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
-    plt.plot(range(-7, 3), mset_list_CNN.T,'.-.',label='CNN-CNN')
+    plt.plot(range(-7, 3), mset_list_CNN.T,'.-.',label='DeepSeparator')
+    # modify ticks
+    xticks = range(-7,3)
+    plt.xticks(xticks)
+
+    yminorLocator = MultipleLocator(0.05)
+    ax1.yaxis.set_minor_locator(yminorLocator)
+
+    plt.xlabel("SNR(db)",fontsize=15)
+    # plt.ylabel("MSE",fontsize=18)
+    title = " MSE temporal"
+    plt.title(title,fontsize=15)
+    # fig = title + ".png"
+    # plt.savefig(fig,dpi=300)
 
 
-    plt.xlabel("SNR(db)",fontsize=18)
-    plt.ylabel("MSE",fontsize=18)
-    plt.legend(fontsize=14)
-    title = name + " MSE temporal"
-    plt.title(title,fontsize=18)
-    fig = title + ".png"
-    plt.savefig(fig,dpi=300)
+    ax2 = plt.subplot(1,3,2)
 
-
-    plt.figure()
     plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), mses_list[:, 1].T, '.-.',label='HHT')
     plt.plot(range(-7, 3), mses_list[:, 2].T, '.-.',label='EEMD-ICA')
     # plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
-    plt.plot(range(-7, 3), mses_list_CNN.T,'.-.',label='CNN-CNN')
+    plt.plot(range(-7, 3), mses_list_CNN.T,'.-.',label='DeepSeparator')
 
-    plt.xlabel("SNR(db)",fontsize=18)
-    plt.ylabel("MSE",fontsize=18)
-    plt.legend(fontsize=14)
-    title = name + " MSE spectral"
-    plt.title(title,fontsize=18)
-    fig = title + ".png"
-    plt.savefig(fig,dpi=300)
+    plt.xlabel("SNR(db)",fontsize=15)
+    # plt.ylabel("MSE",fontsize=18)
+    xticks = range(-7, 3)
+    plt.xticks(xticks)
+    yminorLocator = MultipleLocator(0.05)
+    ax2.yaxis.set_minor_locator(yminorLocator)
 
-    plt.figure()
+    title = " MSE spectral"
+    plt.title(title,fontsize=15)
+    # fig = title + ".png"
+    # plt.savefig(fig,dpi=300)
+
+    ax3 = plt.subplot(1,3,3)
     plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='Adaptive Filter')
     plt.plot(range(-7, 3), cc_list[:, 1].T, '.-.',label='HHT')
     plt.plot(range(-7, 3), cc_list[:, 2].T, '.-.',label='EEMD-ICA')
     # plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
-    plt.plot(range(-7, 3), cc_list_CNN.T,'.-.',label='CNN-CNN')
+    plt.plot(range(-7, 3), cc_list_CNN.T,'.-.',label='DeepSeparator')
 
-    plt.xlabel("SNR(db)",fontsize=18)
-    plt.ylabel("CC",fontsize=18)
-    title = name + " CC"
-    plt.title(title,fontsize=18)
-    fig = title + ".png"
-    plt.legend(fontsize=14)
-    plt.savefig(fig,dpi=300)
+    plt.xlabel("SNR(db)",fontsize=15)
+    # plt.ylabel("CC",fontsize=18)
+    xticks = range(-7, 3)
+    plt.xticks(xticks)
+    yminorLocator = MultipleLocator(0.05)
+    ax3.yaxis.set_minor_locator(yminorLocator)
 
-    plt.show()
+    title = " CC"
+    plt.title(title,fontsize=15)
+    plt.subplots_adjust(wspace=0.3)
+    box = ax1.get_position()
+    ax1.set_position([box.x0, box.y0 + box.height * 0.2,
+                     box.width, box.height * 0.7])
+    box = ax2.get_position()
+    ax2.set_position([box.x0, box.y0 + box.height * 0.2,
+                      box.width, box.height * 0.7])
+    box = ax3.get_position()
+    ax3.set_position([box.x0, box.y0 + box.height * 0.2,
+                      box.width, box.height * 0.7])
+    plt.legend(fontsize=14,loc='upper right',bbox_to_anchor = (0.5, -0.2),ncol=4)
+
+
+
+    fig = name+ ".png"
+    plt.savefig(fig,dpi=400)
+
+
+
+
+
 
 def plotSNR(mset_list, mses_list, cc_list):
     plt.figure()
