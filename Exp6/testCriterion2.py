@@ -7,16 +7,14 @@ from scipy.fftpack import fft
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
-import math
-# update RRMSE TEMPORAL SPECTRAL
+
 class CustomLoss(nn.Module):
 
     def __init__(self):
         super().__init__()
 
     def forward(self, pred, real):
-        coe = get_rms(pred[0]-real[0])/get_rms(real[0])
-        return coe
+        return torch.mean(torch.pow((pred - real), 2))
 
 
 def FourierLoss(pred, real):
@@ -39,11 +37,6 @@ def FourierLoss(pred, real):
 
     return np.mean(np.square(abs_fft_pred - abs_fft_real))
 
-
-def get_rms(records):
-    return math.sqrt(sum([x ** 2 for x in records]) / len(records))
-
-
 def SpectralLoss(pred, real):
     pred = pred.cpu()
     real = real.cpu()
@@ -51,15 +44,17 @@ def SpectralLoss(pred, real):
     pred = pred.detach().numpy()
     real = real.detach().numpy()
 
+    psd_pred = pred
+    psd_real = real
 
-    _psd_pred,freq = plt.psd(pred[0], NFFT=512, Fs=256, pad_to=1024,
-                             scale_by_freq=True)
-    psd_pred = _psd_pred[1:]
-    _psd_real,freq = plt.psd(real[0], NFFT=512, Fs=256, pad_to=1024,
-                              scale_by_freq=True)
-    psd_real = _psd_real[1:]
-    coe = get_rms(psd_real - psd_pred) / get_rms(psd_real)
-    return coe
+    for i in range(len(pred)):
+        _psd_pred,freq = plt.psd(pred[i], NFFT=512, Fs=256, pad_to=1024,
+                                 scale_by_freq=True)
+        psd_pred[i] = _psd_pred[1:]
+        _psd_real,freq = plt.psd(real[i], NFFT=512, Fs=256, pad_to=1024,
+                                  scale_by_freq=True)
+        psd_real[i] = _psd_real[1:]
+    return np.mean(np.square(psd_pred - psd_real))
 
 
 
@@ -191,7 +186,7 @@ mset_list /= sample
 mses_list /= sample
 cc_list /= sample
 
-np.savetxt("EMGmset matrix_CNN_test", mset_list)
-np.savetxt("EMGmses matrix_CNN_test", mses_list)
-np.savetxt("EMGcc matrix_CNN_test", cc_list)
+np.savetxt("EMGmset matrix_CNN", mset_list)
+np.savetxt("EMGmses matrix_CNN", mses_list)
+np.savetxt("EMGcc matrix_CNN", cc_list)
 
