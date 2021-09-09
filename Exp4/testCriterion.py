@@ -1,3 +1,7 @@
+'''
+Log:
+update RRMSE TEMPORAL SPECTRAL
+'''
 import numpy as np
 import torch.optim as optim
 import torch.utils.data as Data
@@ -8,14 +12,20 @@ import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 
+import math
+
+def get_rms(records):
+    return math.sqrt(sum([x ** 2 for x in records]) / len(records))
+
+
 class CustomLoss(nn.Module):
 
     def __init__(self):
         super().__init__()
 
     def forward(self, pred, real):
-        return torch.mean(torch.pow((pred - real), 2))
-
+        coe = get_rms(pred[0] - real[0]) / get_rms(real[0])
+        return coe
 
 def FourierLoss(pred, real):
     pred = pred.cpu()
@@ -43,19 +53,15 @@ def SpectralLoss(pred, real):
     pred = pred.detach().numpy()
     real = real.detach().numpy()
 
-    psd_pred = pred
-    psd_real = real
 
-    for i in range(len(pred)):
-        _psd_pred,freq = plt.psd(pred[i], NFFT=512, Fs=256, pad_to=1024,
-                                 scale_by_freq=True)
-        psd_pred[i] = _psd_pred[1:]
-        _psd_real,freq = plt.psd(real[i], NFFT=512, Fs=256, pad_to=1024,
-                                  scale_by_freq=True)
-        psd_real[i] = _psd_real[1:]
-    return np.mean(np.square(psd_pred - psd_real))
-
-
+    _psd_pred,freq = plt.psd(pred[0], NFFT=512, Fs=256, pad_to=1024,
+                             scale_by_freq=True)
+    psd_pred = _psd_pred[1:]
+    _psd_real,freq = plt.psd(real[0], NFFT=512, Fs=256, pad_to=1024,
+                              scale_by_freq=True)
+    psd_real = _psd_real[1:]
+    coe = get_rms(psd_real - psd_pred) / get_rms(psd_real)
+    return coe
 
 def correlation(pred, real):
     pred = pred.cpu()
@@ -185,7 +191,13 @@ average_test_loss_per_epoch = total_test_loss_per_epoch / test_step_num
 average_test_fourier_loss_per_epoch = total_test_fourier_loss_per_epoch / test_step_num
 average_test_correlation_per_epoch = total_test_correlation_per_epoch / test_step_num
 
-print('--------------test temporal MSE: ', average_test_loss_per_epoch)
-print('--------------test spectral MSE: ', average_test_fourier_loss_per_epoch)
+print('--------------test temporal RRMSE: ', average_test_loss_per_epoch)
+print('--------------test spectral RRMSE: ', average_test_fourier_loss_per_epoch)
 print('--------------test correlation: ', average_test_correlation_per_epoch)
+
+dataname = "all"
+name = selected_model + dataname
+np.savetxt(name+"rrmset", average_test_loss_per_epoch)
+np.savetxt(name+"rrmses", average_test_fourier_loss_per_epoch)
+np.savetxt(name+"cc", average_test_correlation_per_epoch)
 

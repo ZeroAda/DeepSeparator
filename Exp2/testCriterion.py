@@ -1,3 +1,7 @@
+'''
+Log:
+update RRMSE TEMPORAL SPECTRAL
+'''
 import numpy as np
 import torch.optim as optim
 import torch.utils.data as Data
@@ -7,6 +11,13 @@ from scipy.fftpack import fft
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
+import time
+
+import math
+
+def get_rms(records):
+    return math.sqrt(sum([x ** 2 for x in records]) / len(records))
+
 
 class CustomLoss(nn.Module):
 
@@ -14,7 +25,8 @@ class CustomLoss(nn.Module):
         super().__init__()
 
     def forward(self, pred, real):
-        return torch.mean(torch.pow((pred - real), 2))
+        coe = get_rms(pred[0] - real[0]) / get_rms(real[0])
+        return coe
 
 
 def FourierLoss(pred, real):
@@ -43,18 +55,15 @@ def SpectralLoss(pred, real):
     pred = pred.detach().numpy()
     real = real.detach().numpy()
 
-    psd_pred = pred
-    psd_real = real
 
-    for i in range(len(pred)):
-        _psd_pred,freq = plt.psd(pred[i], NFFT=512, Fs=256, pad_to=1024,
-                                 scale_by_freq=True)
-        psd_pred[i] = _psd_pred[1:]
-        _psd_real,freq = plt.psd(real[i], NFFT=512, Fs=256, pad_to=1024,
-                                  scale_by_freq=True)
-        psd_real[i] = _psd_real[1:]
-    return np.mean(np.square(psd_pred - psd_real))
-
+    _psd_pred,freq = plt.psd(pred[0], NFFT=512, Fs=256, pad_to=1024,
+                             scale_by_freq=True)
+    psd_pred = _psd_pred[1:]
+    _psd_real,freq = plt.psd(real[0], NFFT=512, Fs=256, pad_to=1024,
+                              scale_by_freq=True)
+    psd_real = _psd_real[1:]
+    coe = get_rms(psd_real - psd_pred) / get_rms(psd_real)
+    return coe
 
 
 def correlation(pred, real):
@@ -79,7 +88,7 @@ def standardization(data):
     sigma = np.std(data, axis=0)
     return (data - mu) / sigma
 
-
+start = time.time()
 custom_loss = CustomLoss()
 
 BATCH_SIZE = 6000
@@ -93,17 +102,17 @@ print_train_accuracy_frequency = 1
 test_frequency = 10
 
 # 模型有CNN_CNN，CNN_FCN，CNN_CNNFCN，CNN_RNN，CNN_LSTM
-selected_model = 'CNN_CNN'
-model = CNN_CNN()
+selected_model = 'CNN_LSTM'
+model = CNN_LSTM()
 
-test_input = np.load('../data/test_input.npy')
-test_output = np.load('../data/test_output.npy')
+# test_input = np.load('../data/test_input.npy')
+# test_output = np.load('../data/test_output.npy')
 # #
 # test_input = np.load('../data/EOG_EEG_test_input.npy')
 # test_output = np.load('../data/EOG_EEG_test_output.npy')
-#
-# test_input = np.load('../data/EMG_EEG_test_input.npy')
-# test_output = np.load('../data/EMG_EEG_test_output.npy')
+# #
+test_input = np.load('../data/EMG_EEG_test_input.npy')
+test_output = np.load('../data/EMG_EEG_test_output.npy')
 
 '''
 注意使用不同的模型，embedding vector和attenuation vector的维度会有不同，要相应调整ideal_atte_x的长度
@@ -131,7 +140,7 @@ test_loader = Data.DataLoader(
 
 print("torch.cuda.is_available() = ", torch.cuda.is_available())
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
 
 
 '''
@@ -177,15 +186,24 @@ for step, (test_input, test_indicator, test_output) in enumerate(test_loader):
     
     corr = correlation(test_preds, test_output)
 
-    total_test_loss_per_epoch += test_loss.item()
+    total_test_loss_per_epoch += test_loss
     total_test_fourier_loss_per_epoch += test_fourier_loss
     total_test_correlation_per_epoch += corr
 
 average_test_loss_per_epoch = total_test_loss_per_epoch / test_step_num
 average_test_fourier_loss_per_epoch = total_test_fourier_loss_per_epoch / test_step_num
 average_test_correlation_per_epoch = total_test_correlation_per_epoch / test_step_num
+end = time.time()
+interval = end - start
 
-print('--------------test temporal MSE: ', average_test_loss_per_epoch)
-print('--------------test spectral MSE: ', average_test_fourier_loss_per_epoch)
+print("Time: "+str(interval))
+print('--------------test temporal RRMSE: ', average_test_loss_per_epoch)
+print('--------------test spectral RRMSE: ', average_test_fourier_loss_per_epoch)
 print('--------------test correlation: ', average_test_correlation_per_epoch)
+
+dataname = "all"
+name = selected_model + dataname
+np.savetxt(name+"rrmset", average_test_loss_per_epoch)
+np.savetxt(name+"rrmses", average_test_fourier_loss_per_epoch)
+np.savetxt(name+"cc", average_test_correlation_per_epoch)
 
