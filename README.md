@@ -44,3 +44,4 @@ SNR picture and result in excel document.
 
 ### Log
 2021/9/7 Update Experiment 6 test criterion from MSE to RRMSE
+2021/9/9 Update Exp1, 2,4,6 test Criterion from MSE to RRMSE
