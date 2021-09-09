@@ -41,3 +41,6 @@ Accordingly, change the text file name
 Result in the process
 #### Result
 SNR picture and result in excel document.
+
+### Log
+2021/9/7 Update Experiment 6 test criterion from MSE to RRMSE
