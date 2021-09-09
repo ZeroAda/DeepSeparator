@@ -17,6 +17,7 @@ import torch
 
 
 def tradition():
+    print("EOG")
     start = time.time()
     # Data acquisition
     test_output = np.load('../data/test_output.npy')
@@ -61,7 +62,7 @@ def tradition():
 
 
     #
-    for i in range(4000,4040):
+    for i in range(0,40):
         print("------- sample ", i, "----------")
         for j in range(10):
             print("--------- SNR", j-7, "-----------")
@@ -113,9 +114,9 @@ def tradition():
     # np.savetxt("EOGmset matrix", mset_list)
     # np.savetxt("EOGmses matrix", mses_list)
     # np.savetxt("EOGcc matrix", cc_list)
-    np.savetxt("EMGmset matrix", mset_list)
-    np.savetxt("EMGmses matrix", mses_list)
-    np.savetxt("EMGcc matrix", cc_list)
+    np.savetxt("EOGrrmset matrix", mset_list)
+    np.savetxt("EOGrrmses matrix", mses_list)
+    np.savetxt("EOGrrcc matrix", cc_list)
 
     # plotSNRhigh(mset_list, mses_list, cc_list)
     print("-------final result----------")

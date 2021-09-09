@@ -9,6 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft, fftshift, ifft
 from matplotlib.ticker import MultipleLocator
+import math
+def get_rms(records):
+    return math.sqrt(sum([x ** 2 for x in records]) / len(records))
 
 def metric(origin_noisy,clean_eeg,retain_eeg):
     # problem: psd xx 与 手算的不大一样
@@ -21,7 +24,7 @@ def metric(origin_noisy,clean_eeg,retain_eeg):
     """
     # sample point
     # temporal mse
-    mse_t = np.mean(np.power((retain_eeg-clean_eeg),2))
+    mse_t = get_rms(clean_eeg-retain_eeg)/get_rms(clean_eeg)
     # spectral mse
     # fft
     num_sample = 512
@@ -36,8 +39,10 @@ def metric(origin_noisy,clean_eeg,retain_eeg):
                                  scale_by_freq=True)
     clean_eeg_s,freq = plt.psd(clean_eeg, NFFT=512, Fs=256, pad_to=1024,
                                  scale_by_freq=True)
-    noise_eeg_s = plt.psd(origin_noisy, NFFT=512, Fs=256, pad_to=1024,
-                                 scale_by_freq=True)
+    mse_s = get_rms(clean_eeg_s - retain_eeg_s) / get_rms(clean_eeg_s)
+
+    # noise_eeg_s = plt.psd(origin_noisy, NFFT=512, Fs=256, pad_to=1024,
+    #                              scale_by_freq=True)
     # print(np.double(np.mean(np.power(retain_eeg_s-clean_eeg_s,2))))
     # plt.subplot(3,1,1)
     # f = np.linspace(0,num_sample/4,256)
@@ -73,7 +78,6 @@ def metric(origin_noisy,clean_eeg,retain_eeg):
 
     # plt.show()
 
-    mse_s = np.mean(np.power(retain_eeg_s-clean_eeg_s, 2))
     # correlation coefficient
     cc = np.corrcoef(retain_eeg, clean_eeg)[0,1]
     # print("mse t",mse_t)
@@ -130,8 +134,8 @@ def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_
     xticks = range(-7,3)
     plt.xticks(xticks)
 
-    yminorLocator = MultipleLocator(0.05)
-    ax1.yaxis.set_minor_locator(yminorLocator)
+    # yminorLocator = MultipleLocator(0.05)
+    # ax1.yaxis.set_minor_locator(yminorLocator)
 
     plt.xlabel("SNR(db)",fontsize=15)
     # plt.ylabel("MSE",fontsize=18)
@@ -153,8 +157,8 @@ def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_
     # plt.ylabel("MSE",fontsize=18)
     xticks = range(-7, 3)
     plt.xticks(xticks)
-    yminorLocator = MultipleLocator(0.05)
-    ax2.yaxis.set_minor_locator(yminorLocator)
+    # yminorLocator = MultipleLocator(0.05)
+    # ax2.yaxis.set_minor_locator(yminorLocator)
 
     title = " MSE spectral"
     plt.title(title,fontsize=15)
@@ -172,8 +176,7 @@ def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_
     # plt.ylabel("CC",fontsize=18)
     xticks = range(-7, 3)
     plt.xticks(xticks)
-    yminorLocator = MultipleLocator(0.05)
-    ax3.yaxis.set_minor_locator(yminorLocator)
+
 
     title = " CC"
     plt.title(title,fontsize=15)

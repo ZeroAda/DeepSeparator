@@ -1,3 +1,7 @@
+'''
+Log:
+update RRMSE TEMPORAL SPECTRAL
+'''
 import numpy as np
 import torch.optim as optim
 import torch.utils.data as Data
@@ -8,7 +12,7 @@ import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
 import math
-# update RRMSE TEMPORAL SPECTRAL
+
 class CustomLoss(nn.Module):
 
     def __init__(self):
@@ -166,7 +170,7 @@ mset_list = np.zeros((10, 1))
 mses_list = np.zeros((10, 1))
 # Correlation coefficient matrix
 cc_list = np.zeros((10, 1))
-for i in range(4000,4400):
+for i in range(0,400):
     print("------- sample ", i, "----------")
     for j in range(10):
         print("--------- SNR", j - 7, "-----------")
@@ -191,7 +195,7 @@ mset_list /= sample
 mses_list /= sample
 cc_list /= sample
 
-np.savetxt("EMGmset matrix_CNN_test", mset_list)
-np.savetxt("EMGmses matrix_CNN_test", mses_list)
-np.savetxt("EMGcc matrix_CNN_test", cc_list)
+np.savetxt("EOGmset matrix_CNN_test", mset_list)
+np.savetxt("EOGmses matrix_CNN_test", mses_list)
+np.savetxt("EOGcc matrix_CNN_test", cc_list)
 
