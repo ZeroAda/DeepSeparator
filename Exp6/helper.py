@@ -87,38 +87,80 @@ def metric(origin_noisy,clean_eeg,retain_eeg):
 
     return mse_s, mse_t, cc
 
-def plotSNRhigh(mset_list, mses_list, cc_list):
-    plt.figure()
-    plt.plot(range(-7, 3), mset_list[:,0].T,'.-.',label='Adaptive Filter')
-    plt.plot(range(-7, 3), mset_list[:,1].T,'.-.',label='HHT')
-    plt.plot(range(-7, 3), mset_list[:,2].T,'.-.',label='EEMD-ICA')
-    plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
-    plt.xlabel("SNR(db)")
-    plt.ylabel("MSE")
-    plt.legend()
-    plt.title("MSE temporal")
 
-    plt.figure()
-    plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.',label='Adaptive Filter')
-    plt.plot(range(-7, 3), mses_list[:, 1].T, '.-.',label='HHT')
-    plt.plot(range(-7, 3), mses_list[:, 2].T, '.-.',label='EEMD-ICA')
-    plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
-    plt.xlabel("SNR(db)")
-    plt.ylabel("MSE")
-    plt.legend()
-    plt.title("MSE spectral")
+def plotSNRhigh(mset_list, mses_list, cc_list, name):
 
-    plt.figure()
-    plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.',label='Adaptive Filter')
-    plt.plot(range(-7, 3), cc_list[:, 1].T, '.-.',label='HHT')
-    plt.plot(range(-7, 3), cc_list[:, 2].T, '.-.',label='EEMD-ICA')
-    plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
-    plt.xlabel("SNR(db)")
-    plt.ylabel("CC")
-    plt.title("CC")
-    plt.legend()
-    plt.show()
+        # set dpi and fontsize
+    plt.figure(figsize=(13, 9))
+    ax1 = plt.subplot(1, 3, 1)
 
+    plt.plot(range(-7, 3), mset_list[:, 0].T, '.-.', label='Adaptive Filter')
+    plt.plot(range(-7, 3), mset_list[:, 1].T, '.-.', label='HHT')
+    plt.plot(range(-7, 3), mset_list[:, 2].T, '.-.', label='EEMD-ICA')
+    # plt.plot(range(-7, 3), mset_list[:,3].T,'.-.',label='EEMD-CCA')
+    # plt.plot(range(-7, 3), mset_list_CNN.T, '.-.', label='DeepSeparator')
+    # modify ticks
+    xticks = range(-7, 3)
+    plt.xticks(xticks)
+
+    # yminorLocator = MultipleLocator(0.05)
+    # ax1.yaxis.set_minor_locator(yminorLocator)
+
+    plt.xlabel("SNR(db)", fontsize=15)
+    # plt.ylabel("MSE",fontsize=18)
+    title = " RRMSE temporal"
+    plt.title(title, fontsize=15)
+    # fig = title + ".png"
+    # plt.savefig(fig,dpi=300)
+
+    ax2 = plt.subplot(1, 3, 2)
+
+    plt.plot(range(-7, 3), mses_list[:, 0].T, '.-.', label='Adaptive Filter')
+    plt.plot(range(-7, 3), mses_list[:, 1].T, '.-.', label='HHT')
+    plt.plot(range(-7, 3), mses_list[:, 2].T, '.-.', label='EEMD-ICA')
+    # plt.plot(range(-7, 3), mses_list[:, 3].T, '.-.',label='EEMD-CCA')
+    # plt.plot(range(-7, 3), mses_list_CNN.T, '.-.', label='DeepSeparator')
+
+    plt.xlabel("SNR(db)", fontsize=15)
+    # plt.ylabel("MSE",fontsize=18)
+    xticks = range(-7, 3)
+    plt.xticks(xticks)
+    # yminorLocator = MultipleLocator(0.05)
+    # ax2.yaxis.set_minor_locator(yminorLocator)
+
+    title = " RRMSE spectral"
+    plt.title(title, fontsize=15)
+    # fig = title + ".png"
+    # plt.savefig(fig,dpi=300)
+
+    ax3 = plt.subplot(1, 3, 3)
+    plt.plot(range(-7, 3), cc_list[:, 0].T, '.-.', label='Adaptive Filter')
+    plt.plot(range(-7, 3), cc_list[:, 1].T, '.-.', label='HHT')
+    plt.plot(range(-7, 3), cc_list[:, 2].T, '.-.', label='EEMD-ICA')
+    # plt.plot(range(-7, 3), cc_list[:, 3].T, '.-.',label='EEMD-CCA')
+    # plt.plot(range(-7, 3), cc_list_CNN.T, '.-.', label='DeepSeparator')
+
+    plt.xlabel("SNR(db)", fontsize=15)
+    # plt.ylabel("CC",fontsize=18)
+    xticks = range(-7, 3)
+    plt.xticks(xticks)
+
+    title = " CC"
+    plt.title(title, fontsize=15)
+    plt.subplots_adjust(wspace=0.3)
+    box = ax1.get_position()
+    ax1.set_position([box.x0, box.y0 + box.height * 0.2,
+                      box.width, box.height * 0.7])
+    box = ax2.get_position()
+    ax2.set_position([box.x0, box.y0 + box.height * 0.2,
+                      box.width, box.height * 0.7])
+    box = ax3.get_position()
+    ax3.set_position([box.x0, box.y0 + box.height * 0.2,
+                      box.width, box.height * 0.7])
+    plt.legend(fontsize=14, loc='upper right', bbox_to_anchor=(0.5, -0.2), ncol=4)
+
+    fig = name + ".png"
+    plt.savefig(fig, dpi=400)
 
 def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_CNN, cc_list_CNN):
     # set dpi and fontsize
@@ -139,7 +181,7 @@ def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_
 
     plt.xlabel("SNR(db)",fontsize=15)
     # plt.ylabel("MSE",fontsize=18)
-    title = " MSE temporal"
+    title = " RRMSE temporal"
     plt.title(title,fontsize=15)
     # fig = title + ".png"
     # plt.savefig(fig,dpi=300)
@@ -160,7 +202,7 @@ def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_
     # yminorLocator = MultipleLocator(0.05)
     # ax2.yaxis.set_minor_locator(yminorLocator)
 
-    title = " MSE spectral"
+    title = " RRMSE spectral"
     plt.title(title,fontsize=15)
     # fig = title + ".png"
     # plt.savefig(fig,dpi=300)
@@ -196,10 +238,6 @@ def plotSNRhighCNN(name,mset_list, mses_list, cc_list, mset_list_CNN, mses_list_
 
     fig = name+ ".png"
     plt.savefig(fig,dpi=400)
-
-
-
-
 
 
 def plotSNR(mset_list, mses_list, cc_list):

@@ -20,6 +20,13 @@ if __name__ == '__main__':
     EOGmset_list_CNN = np.loadtxt("EOGmset matrix_CNN_test")
     EOGmses_list_CNN = np.loadtxt("EOGmses matrix_CNN_test")
     EOGcc_list_CNN = np.loadtxt("EOGcc matrix_CNN_test")
+    print("---EOG---")
+    EOGmset_avg = np.mean(EOGmset_list, axis=0)
+    EOGmses_avg = np.mean(EOGmses_list, axis=0)
+    EOGcc_avg = np.mean(EOGcc_list, axis=0)
+    print(EOGmset_avg)
+    print(EOGmses_avg)
+    print(EOGcc_avg)
     plotSNRhighCNN("(a) Ocular artifact removal",EOGmset_list,EOGmses_list,EOGcc_list, EOGmset_list_CNN, EOGmses_list_CNN, EOGcc_list_CNN)
 
 
@@ -31,6 +38,13 @@ if __name__ == '__main__':
     EMGmses_list_CNN = np.loadtxt("EMGmses matrix_CNN_test")
     EMGcc_list_CNN = np.loadtxt("EMGcc matrix_CNN_test")
     plotSNRhighCNN("(b) Myogenic artifact removal",EMGmset_list,EMGmses_list,EMGcc_list, EMGmset_list_CNN, EMGmses_list_CNN, EMGcc_list_CNN)
+    print("---EMG---")
+    EMGmset_avg = np.mean(EMGmset_list, axis=0)
+    EMGmses_avg = np.mean(EMGmses_list, axis=0)
+    EMGcc_avg = np.mean(EMGcc_list, axis=0)
+    print(EMGmses_avg)
+    print(EMGmset_avg)
+    print(EMGcc_avg)
 
 
 
