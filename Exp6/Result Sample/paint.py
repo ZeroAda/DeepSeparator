@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 File Name: paint.py
-Description: paint SNR plot
+Description: paint SNR plot and Count average
 Author: Orange Killer
 Date: 2021/9/2
 Log:
@@ -45,6 +45,19 @@ if __name__ == '__main__':
     print(EMGmses_avg)
     print(EMGmset_avg)
     print(EMGcc_avg)
+
+    # EMG_EOG
+    print("overall")
+    all_cc = np.loadtxt("allrrcc matrix")
+    all_mses = np.loadtxt("allrrmses matrix")
+    all_mset = np.loadtxt("allrrmset matrix")
+    avg_cc = np.mean(all_cc, axis=0)
+    avg_mses = np.mean(all_mses, axis=0)
+    avg_mset = np.mean(all_mset, axis=0)
+    print(avg_mset)
+    print(avg_mses)
+    print(avg_cc)
+    # plotSNRhigh(all_mset, all_mses, all_cc, "all")
 
 
 
